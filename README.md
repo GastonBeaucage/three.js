@@ -1,6 +1,11 @@
 Doom Clone three.js
 ========
 
+## TODO
+* Make a tutorial on how to run
+* Update to a new version of three.js
+* Make a revision list
+
 ## Credit
 Thanks to these wonderful libraries this project can exist:
 
