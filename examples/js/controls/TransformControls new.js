@@ -969,14 +969,14 @@
 					}
 
 				}
-
+				
 			} else if ( _mode === "scale" ) {
 
 				point.sub( offset );
 				point.multiply( parentScale );
 
 				if ( scope.space === "local" ) {
-					var tempSizeFinal;
+
 					if ( scope.axis === "XYZ" ) {
 					
 						scale = 1 + ( ( point.y ) / Math.max( oldScale.x, oldScale.y, oldScale.z ) );
@@ -1004,39 +1004,34 @@
 							if ( scope.axis === "X" ) {
 								
 								var scaleResult = Math.round((oldScale.x * ( 1 + point.x / oldScale.x )) / scope.scaleSnap) * scope.scaleSnap;
-
-								var delta = scaleResult - scope.object.scale.x;
+								
 								if(scaleResult != 0) {
 								
 									scope.object.scale.x = scaleResult;
-									if(scope.object.geometry instanceof THREE.BoxGeometry) {
-								
-										if(delta != 0) {
-											scope.object.position.x += delta / 2;
-										}
-									
-									}
 									
 								}
 								
+								if(scope.object.geometry instanceof THREE.BoxGeometry) {
 								
-								
+									var temp = scope.object.position.x;
+									scope.object.position.x += scope.object.scale.x / 2;
+									scope.object.position.x -= temp / 2;
+									
+								}
 							}
 							if ( scope.axis === "Y" ) {
 								
 								var scaleResult = Math.round((oldScale.y * ( 1 + point.y / oldScale.y )) / scope.scaleSnap) * scope.scaleSnap;
-
-								var delta = scaleResult - scope.object.scale.y;
+								
 								if(scaleResult != 0) {
 								
 									scope.object.scale.y = scaleResult;
-									if(scope.object.geometry instanceof THREE.BoxGeometry) {
-								
-										if(delta != 0) {
-											scope.object.position.y += delta / 2;
-										}
 									
-									}
+								}
+								
+								if(scope.object.geometry instanceof THREE.BoxGeometry) {
+								
+									scope.object.position.y += scope.object.scale.y / 2;
 									
 								}
 								
@@ -1044,18 +1039,16 @@
 							if ( scope.axis === "Z" ) {
 								
 								var scaleResult = Math.round((oldScale.z * ( 1 + point.z / oldScale.z )) / scope.scaleSnap) * scope.scaleSnap;
-
-								var delta = scaleResult - scope.object.scale.z;
+								
 								if(scaleResult != 0) {
 								
 									scope.object.scale.z = scaleResult;
-									if(scope.object.geometry instanceof THREE.BoxGeometry) {
-								
-										if(delta != 0) {
-											scope.object.position.z += delta / 2;
-										}
 									
-									}
+								}
+								
+								if(scope.object.geometry instanceof THREE.BoxGeometry) {
+								
+									scope.object.position.z += scope.object.scale.z / 2;
 									
 								}
 								

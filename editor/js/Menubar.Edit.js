@@ -90,10 +90,18 @@ Menubar.Edit = function ( editor ) {
 	option.onClick( function () {
 
 		var object = editor.selected;
+		var userDataObject = undefined;
 
 		if ( object.parent === null ) return; // avoid cloning the camera or scene
-
+		
+		if(object.userDataObject !== undefined) {
+		
+			userDataObject = JSON.parse(JSON.stringify(object.userDataObject));
+		
+		}
+		
 		object = object.clone();
+		object.userDataObject = userDataObject;
 
 		editor.execute( new AddObjectCommand( object ) );
 

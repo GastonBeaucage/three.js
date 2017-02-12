@@ -100,15 +100,21 @@
 				float a = atan( position.y, position.x );
 				float r = sqrt( dot( position, position ) );
 
-				vec2 uv;
-				uv.x = cos( a ) / r;
+				/*vec2 uv;
+				uv.x += cos( a ) / r;
 				uv.y = sin( a ) / r;
 				uv /= 10.0;
-				uv += time * 0.05;
+				uv += time * 0.00;*/
 
-				vec3 color = texture2D( texture, uv ).rgb;
+				vec2 test = vUv;
+				
+				test /= 2.0;
+				
+				//test.x += time;
+				
+				vec3 color = texture2D( texture, test ).rgb;
 
-				gl_FragColor = vec4( color * r * 1.5, 1.0 );
+				gl_FragColor = vec4( color, 1.0 );
 
 			}
 		</script>
@@ -199,7 +205,7 @@
 				uniforms2 = {
 					time: { type: "f", value: 1.0 },
 					resolution: { type: "v2", value: new THREE.Vector2() },
-					texture: { type: "t", value: new THREE.TextureLoader().load( "textures/disturb.jpg" ) }
+					texture: { type: "t", value: new THREE.TextureLoader().load( "textures/crate.gif" ) }
 				};
 
 				uniforms2.texture.value.wrapS = uniforms2.texture.value.wrapT = THREE.RepeatWrapping;
@@ -282,7 +288,7 @@
 					object.rotation.x += delta * 0.5 * ( i % 2 ? -1 : 1 );
 
 				}
-
+				
 				renderer.render( scene, camera );
 
 			}

@@ -1,0 +1,76 @@
+{
+	"metadata": {
+		"version": 4.4,
+		"type": "Object",
+		"generator": "Object3D.toJSON"
+	},
+	"geometries": [
+		{
+			"uuid": "99C80CA3-6C47-48C2-88E7-78FE14D1C8C9",
+			"type": "BoxGeometry",
+			"width": 1,
+			"height": 1,
+			"depth": 1
+		}],
+	"materials": [
+		{
+			"uuid": "3993F58B-2605-4E72-A52F-96E7C540B263",
+			"type": "MeshStandardMaterial",
+			"color": 16777215,
+			"emissive": 0
+		}],
+	"object": {
+		"uuid": "A62021BE-8AF9-44EA-B23F-ED93070C2C13",
+		"type": "Scene",
+		"name": "Scene",
+		"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+		"children": [
+			{
+				"uuid": "6E6897A2-E5B0-40F3-9F76-84E86F6E4C5C",
+				"type": "Group",
+				"name": "Group 1",
+				"matrix": [1,0,0,0,0,0.8839573860168457,0.467567503452301,0,0,-0.467567503452301,0.8839573860168457,0,0,1.5,0,1],
+				"children": [
+					{
+						"uuid": "533AC6D2-24AF-4E41-AF2C-E10ED1CF7B4F",
+						"type": "Mesh",
+						"name": "Box 2",
+						"matrix": [0.36519214510917664,0,0,0,0,1.835047960281372,0,0,0,0,1.5689644813537598,0,-0.5,0.5,0,1],
+						"geometry": "99C80CA3-6C47-48C2-88E7-78FE14D1C8C9",
+						"material": "3993F58B-2605-4E72-A52F-96E7C540B263"
+					},
+					{
+						"uuid": "6CE4F564-3563-4315-8265-57B3BE0E52EA",
+						"type": "Mesh",
+						"name": "Box 2",
+						"matrix": [1,0,0,0,0,1,0,0,0,0,0.39200255274772644,0,0,0,0.5,1],
+						"geometry": "99C80CA3-6C47-48C2-88E7-78FE14D1C8C9",
+						"material": "3993F58B-2605-4E72-A52F-96E7C540B263"
+					},
+					{
+						"uuid": "66B2A32E-9971-4953-BA43-E692FC609B5F",
+						"type": "Mesh",
+						"name": "Box 2",
+						"matrix": [1,0,0,0,0,1,0,0,0,0,0.40226638317108154,0,0,0,-0.5,1],
+						"geometry": "99C80CA3-6C47-48C2-88E7-78FE14D1C8C9",
+						"material": "3993F58B-2605-4E72-A52F-96E7C540B263"
+					},
+					{
+						"uuid": "E25361DC-1267-41C6-AF15-EE251A62DABA",
+						"type": "Mesh",
+						"name": "Box 2",
+						"matrix": [1,0,0,0,0,0.24841272830963135,0,0,0,0,1,0,0,0,0,1],
+						"geometry": "99C80CA3-6C47-48C2-88E7-78FE14D1C8C9",
+						"material": "3993F58B-2605-4E72-A52F-96E7C540B263"
+					}]
+			},
+			{
+				"uuid": "70584443-53D0-407C-AFDA-60E7D57092DA",
+				"type": "DirectionalLight",
+				"name": "DirectionalLight 1",
+				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,5,10,7.5,1],
+				"color": 16777215,
+				"intensity": 1
+			}]
+	}
+}

@@ -4,6 +4,11 @@
 
 Menubar.Add = function ( editor ) {
 
+	var userDataObject = {};
+		userDataObject.mass = 0;
+		userDataObject.filterGroup = 1;
+		userDataObject.filterMask = 1;
+
 	var container = new UI.Panel();
 	container.setClass( 'menu' );
 
@@ -76,8 +81,67 @@ Menubar.Add = function ( editor ) {
 		var geometry = new THREE.BoxGeometry( 1, 1, 1 );
 		var mesh = new THREE.Mesh( geometry, new THREE.MeshStandardMaterial() );
 		mesh.name = 'Box ' + ( ++ meshCount );
+		
+		mesh.userDataObject = JSON.parse(JSON.stringify(userDataObject));
+		mesh.userData = mesh.userDataObject;
 
 		editor.execute( new AddObjectCommand( mesh ) );
+
+	} );
+	options.add( option );
+	
+	// NPC
+	
+	var option = new UI.Row();
+	option.setClass( 'option' );
+	option.setTextContent( 'NPC' );
+	option.onClick( function () {
+
+		var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+		////////////////////////////////////////STANDARD MATERIAL--->SHADER MATERIAL
+		var mesh = new THREE.Mesh( geometry, new THREE.MeshStandardMaterial() );
+		mesh.name = 'NPC ' + ( ++ meshCount );
+
+		editor.execute( new AddObjectCommand( mesh ) );
+
+	} );
+	options.add( option );
+	
+	// Player
+	
+	var option = new UI.Row();
+	option.setClass( 'option' );
+	option.setTextContent( 'Player' );
+	option.onClick( function () {
+	
+		var group = new THREE.Group();
+		
+		group.name = 'Player ' + ( ++ meshCount );
+		
+		var radius = 0.5;
+		var widthSegments = 32;
+		var heightSegments = 16;
+		var phiStart = 0;
+		var phiLength = Math.PI * 2;
+		var thetaStart = 0;
+		var thetaLength = Math.PI;
+
+		var geometry = new THREE.SphereGeometry( radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength );
+		var mesh = new THREE.Mesh( geometry, new THREE.MeshStandardMaterial() );
+		
+		group.add(mesh);
+		
+		var geometry = new THREE.PlaneGeometry( 2, 2 );
+		var material = new THREE.MeshStandardMaterial();
+		var mesh = new THREE.Mesh( geometry, material );
+		mesh.translateY(0.50);
+		
+		group.add(mesh);
+		
+		group.userDataObject = JSON.parse(JSON.stringify(userDataObject));
+		group.userData = mesh.userDataObject;
+
+		editor.execute( new AddObjectCommand( group ) );
 
 	} );
 	options.add( option );
@@ -142,6 +206,9 @@ Menubar.Add = function ( editor ) {
 		var geometry = new THREE.SphereGeometry( radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength );
 		var mesh = new THREE.Mesh( geometry, new THREE.MeshStandardMaterial() );
 		mesh.name = 'Sphere ' + ( ++ meshCount );
+		
+		mesh.userDataObject = JSON.parse(JSON.stringify(userDataObject));
+		mesh.userData = mesh.userDataObject;
 
 		editor.execute( new AddObjectCommand( mesh ) );
 
@@ -284,6 +351,9 @@ Menubar.Add = function ( editor ) {
 		var sprite = new THREE.Sprite( new THREE.SpriteMaterial() );
 		sprite.name = 'Sprite ' + ( ++ meshCount );
 
+		sprite.userDataObject = JSON.parse(JSON.stringify(userDataObject));
+		sprite.userData = sprite.userDataObject;
+		
 		editor.execute( new AddObjectCommand( sprite ) );
 
 	} );

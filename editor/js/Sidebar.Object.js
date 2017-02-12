@@ -270,7 +270,84 @@ Sidebar.Object = function ( editor ) {
 	objectVisibleRow.add( objectVisible );
 
 	container.add( objectVisibleRow );
+	
+	//detach
+	
+	var objectDetach = new UI.Button( 'Detach' );
+	objectDetach.onClick( function () {
+		var object = editor.selected;
+		var parent = object.parent;
+		var scene = editor.scene;
 
+		THREE.SceneUtils.detach( object, parent, scene );
+		updateUI(object);
+	} );
+	container.add( objectDetach );
+	
+	// physics options
+	
+	//mass
+	container.add( new UI.HorizontalRule() );
+	
+	var objectMassRow = new UI.Row();
+	
+	var objectMass = new UI.Number( 0 ).setRange( 0.0, Infinity ).setWidth( '50px' ).onChange(function () {
+		var object = editor.selected;
+		
+		object.userDataObject.mass = objectMass.getValue()
+		
+		object.userData = object.userDataObject;
+		updateUI(object);
+	});
+
+	objectMassRow.add( new UI.Text( 'Mass' ).setWidth( '90px' ) );
+	objectMassRow.add( objectMass );
+
+	objectMassRow.setDisplay('none');
+	
+	container.add( objectMassRow );
+	
+	//Collision Filter Group
+	var objectFilterGroupRow = new UI.Row();
+	var objectFilterGroup = new UI.Integer( 0 ).setRange( 1, Infinity ).onChange(function () {
+		var object = editor.selected;
+		
+		object.userDataObject.filterGroup = Math.pow(2, objectFilterGroup.getValue());
+		
+		object.userData = object.userDataObject;
+		updateUI(object);
+	});
+
+	objectFilterGroupRow.add( new UI.Text( 'Collision Filter Group' ).setWidth( '90px' ) );
+	objectFilterGroupRow.add( objectFilterGroup );
+
+	objectFilterGroupRow.setDisplay('none');
+	
+	container.add( objectFilterGroupRow );
+	
+	//Collision Filter Mask
+	
+	var objectFilterMaskRow = new UI.Row();
+	var objectFilterMask = new UI.Input().setWidth( '150px' ).setFontSize( '12px' ).onChange( function () {
+		var object = editor.selected;
+		
+		object.userDataObject.filterMask = eval(objectFilterMask.getValue());
+		
+		object.userData = object.userDataObject;
+		updateUI(object);
+	} );
+
+	objectFilterMaskRow.add( new UI.Text( 'Collision Filter Mask' ).setWidth( '90px' ) );
+	objectFilterMaskRow.add( objectFilterMask );
+	
+	objectFilterMaskRow.setDisplay('none');
+
+	container.add( objectFilterMaskRow );
+	
+	// npc options
+	
+	
+	
 	// user data
 
 	var timeout;
@@ -299,9 +376,6 @@ Sidebar.Object = function ( editor ) {
 	objectUserDataRow.add( objectUserData );
 
 	container.add( objectUserDataRow );
-
-
-	//
 
 	function updateScaleX() {
 
@@ -526,7 +600,21 @@ Sidebar.Object = function ( editor ) {
 		for ( var property in properties ) {
 
 			properties[ property ].setDisplay( object[ property ] !== undefined ? '' : 'none' );
-
+			
+		}
+		
+		if(object.geometry instanceof THREE.BoxGeometry || object.geometry instanceof THREE.SphereGeometry || object instanceof THREE.Sprite) {
+			
+			objectMassRow.setDisplay('');
+			objectFilterGroupRow.setDisplay('');
+			objectFilterMaskRow.setDisplay('');
+			
+		} else {
+		
+			objectMassRow.setDisplay('none');
+			objectFilterGroupRow.setDisplay('none');
+			objectFilterMaskRow.setDisplay('none');
+			
 		}
 
 	}
@@ -626,7 +714,7 @@ Sidebar.Object = function ( editor ) {
 		objectScaleX.setValue( object.scale.x );
 		objectScaleY.setValue( object.scale.y );
 		objectScaleZ.setValue( object.scale.z );
-
+		
 		if ( object.fov !== undefined ) {
 
 			objectFov.setValue( object.fov );
@@ -704,12 +792,20 @@ Sidebar.Object = function ( editor ) {
 			objectShadowRadius.setValue( object.shadow.radius );
 
 		}
+		
+		if ( object.userDataObject !== undefined ) {
+		
+			objectMass.setValue( object.userDataObject.mass );
+			objectFilterGroup.setValue( Math.log(object.userDataObject.filterGroup) / Math.log(2) );
+			objectFilterMask.setValue('');
+		
+		}
 
 		objectVisible.setValue( object.visible );
 
 		try {
 
-			objectUserData.setValue( JSON.stringify( object.userData, null, '  ' ) );
+			objectUserData.setValue( JSON.stringify( object.userDataObject !== undefined ? object.userDataObject : object.userData, null, '  ' ) );
 
 		} catch ( error ) {
 

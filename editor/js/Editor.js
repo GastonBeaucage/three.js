@@ -94,7 +94,47 @@ var Editor = function () {
 
 	this.selected = null;
 	this.helpers = {};
+	
+	this.sphereShape;
+	this.sphereBody; 
 
+	this.physicsMaterial;
+	this.walls = [];
+	this.balls = [];
+	this.ballMeshes = [];
+	this.boxes = [];
+	this.boxMeshes = [];
+	
+	this.world = new CANNON.World();
+	
+	this.world.quatNormalizeSkip = 0;
+	this.world.quatNormalizeFast = false;
+
+	var solver = new CANNON.GSSolver();
+
+	this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
+	this.world.defaultContactMaterial.contactEquationRelaxation = 4;
+
+	solver.iterations = 7;
+	solver.tolerance = 0.1;
+	var split = true;
+	if(split)
+		this.world.solver = new CANNON.SplitSolver(solver);
+	else
+		this.world.solver = solver;
+
+	this.world.gravity.set(0,-20,0);
+	this.world.broadphase = new CANNON.NaiveBroadphase();
+
+	// Create a slippery material (friction coefficient = 0.0)
+	this.physicsMaterial = new CANNON.Material("slipperyMaterial");
+	var physicsContactMaterial = new CANNON.ContactMaterial(this.physicsMaterial,
+															this.physicsMaterial,
+															0.0, // friction coefficient
+															0.3  // restitution
+															);
+	// We must add the contact materials to the world
+	this.world.addContactMaterial(physicsContactMaterial);
 };
 
 Editor.prototype = {

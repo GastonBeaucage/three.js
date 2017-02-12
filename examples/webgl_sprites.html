@@ -16,17 +16,24 @@
 
 	<body>
 		<script src="../build/three.js"></script>
+		<script src="js/controls/OrbitControls.js"></script>
 
 		<script>
 
 			var camera, scene, renderer;
 			var cameraOrtho, sceneOrtho;
+			
+			var controls;
 
 			var spriteTL, spriteTR, spriteBL, spriteBR, spriteC;
 
 			var mapC;
 
 			var group;
+			
+			var plane;
+			
+			var faces = [0, 0, 0, 0];
 
 			init();
 			animate();
@@ -36,20 +43,20 @@
 				var width = window.innerWidth;
 				var height = window.innerHeight;
 
-				camera = new THREE.PerspectiveCamera( 60, width / height, 1, 2100 );
+				camera = new THREE.PerspectiveCamera( 60, width / height, 1, 10000 );
 				camera.position.z = 1500;
 
 				cameraOrtho = new THREE.OrthographicCamera( - width / 2, width / 2, height / 2, - height / 2, 1, 10 );
 				cameraOrtho.position.z = 10;
 
 				scene = new THREE.Scene();
-				scene.fog = new THREE.Fog( 0x000000, 1500, 2100 );
+				//scene.fog = new THREE.Fog( 0x000000, 1500, 2100 );
 
 				sceneOrtho = new THREE.Scene();
 
 				// create sprites
 
-				var amount = 200;
+				var amount = 100;
 				var radius = 500;
 
 				var textureLoader = new THREE.TextureLoader();
@@ -60,14 +67,17 @@
 
 				group = new THREE.Group();
 
-				var materialC = new THREE.SpriteMaterial( { map: mapC, color: 0xffffff, fog: true } );
-				var materialB = new THREE.SpriteMaterial( { map: mapB, color: 0xffffff, fog: true } );
+				var materialC = new THREE.SpriteMaterial( { map: mapC, color: 0xffffff, fog: false } );
+				var materialB = new THREE.SpriteMaterial( { map: mapB, color: 0xffffff, fog:false } );
 
 				for ( var a = 0; a < amount; a ++ ) {
 
 					var x = Math.random() - 0.5;
 					var y = Math.random() - 0.5;
 					var z = Math.random() - 0.5;
+					//var x = 0;
+					//var y = 0;
+					//var z = 0;
 
 					if ( z < 0 ) {
 
@@ -83,16 +93,25 @@
 					}
 
 					var sprite = new THREE.Sprite( material );
-
+					
 					sprite.position.set( x, y, z );
 					sprite.position.normalize();
 					sprite.position.multiplyScalar( radius );
+					sprite.material.rotation = 0;
+					sprite.scale.set( 100, 100, 1.0 );
 
 					group.add( sprite );
 
 				}
 
 				scene.add( group );
+				
+				var geometry = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
+				var material = new THREE.MeshBasicMaterial( {map: mapB, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthTest: true, transparent : true } );
+				material.alphaTest = 0.7;
+				plane = new THREE.Mesh( geometry, material );
+				plane.position.set(100, 0, 0);
+				scene.add( plane );
 
 				// renderer
 
@@ -106,6 +125,10 @@
 				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
+				
+				controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.addEventListener( 'change', render );
+				//controls.maxPolarAngle = Math.PI / 2;
 
 			}
 
@@ -132,9 +155,9 @@
 				spriteBR.scale.set( width, height, 1 );
 				sceneOrtho.add( spriteBR );
 
-				spriteC = new THREE.Sprite( material );
-				spriteC.scale.set( width, height, 1 );
-				sceneOrtho.add( spriteC );
+				//spriteC = new THREE.Sprite( material );
+				//spriteC.scale.set( width, height, 1 );
+				//sceneOrtho.add( spriteC );
 
 				updateHUDSprites();
 
@@ -154,7 +177,7 @@
 				spriteTR.position.set(   width - imageWidth,   height - imageHeight, 1 ); // top right
 				spriteBL.position.set( - width + imageWidth, - height + imageHeight, 1 ); // bottom left
 				spriteBR.position.set(   width - imageWidth, - height + imageHeight, 1 ); // bottom right
-				spriteC.position.set( 0, 0, 1 ); // center
+				//spriteC.position.set( 0, 0, 1 ); // center
 
 			}
 
@@ -204,22 +227,58 @@
 						imageHeight = material.map.image.height;
 
 					}
+					
+				//start here...
+				var cameraVector = new THREE.Vector3();
+				cameraVector.setFromMatrixPosition(camera.matrixWorld);
 
-					sprite.material.rotation += 0.1 * ( i / l );
-					sprite.scale.set( scale * imageWidth, scale * imageHeight, 1.0 );
-
-					if ( material.map !== mapC ) {
-
-						material.opacity = Math.sin( time + sprite.position.x * 0.01 ) * 0.4 + 0.6;
-
-					}
+				cameraVector.y = plane.position.y;
+				
+				//sprite.lookAt(cameraVector, sprite.position, sprite.up);
+				//sprite.lootAt(new THREE.Vector3(0, 1, 0));
 
 				}
 
-				group.rotation.x = time * 0.5;
-				group.rotation.y = time * 0.75;
-				group.rotation.z = time * 1.0;
+				var cameraVector = new THREE.Vector3();
+				cameraVector.setFromMatrixPosition(camera.matrixWorld);
+				
+				var vector = new THREE.Vector3( 0, 0, - 1 );
+				vector.applyQuaternion( camera.quaternion );
+				
+				var dirVector = new THREE.Vector3();
+				camera.getWorldDirection( dirVector );
 
+				cameraVector.y = plane.position.y;
+
+				plane.lookAt(new THREE.Vector3(1, 1, 0));
+				
+				plane.lookAt(cameraVector, plane.position, plane.up);
+				
+				var cameraVectorHat = camera.position;
+				
+				var frontVectorHat = new THREE.Vector3(0, 0, 1);
+				var leftVectorHat = new THREE.Vector3(1, 0, 0);
+				
+				//console.log("front");
+				var front = frontVectorHat.dot(cameraVectorHat)
+				//console.log(front);
+				//console.log("left");
+				var left = leftVectorHat.dot(cameraVectorHat);
+				//console.log(left);
+				if(Math.abs(front) > Math.abs(left)) {
+					if(front > 0) {
+						console.log("front");
+					} else {
+						console.log("back");
+					}
+				} else {
+					if(left > 0) {
+						console.log("left");
+					} else {
+						console.log("right");
+					}
+				}
+				
 				renderer.clear();
 				renderer.render( scene, camera );
 				renderer.clearDepth();

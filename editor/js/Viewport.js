@@ -308,6 +308,8 @@ var Viewport = function ( editor ) {
 	signals.snapChanged.add( function ( dist ) {
 
 		transformControls.setTranslationSnap( dist );
+		transformControls.setRotationSnap( dist );
+		transformControls.setScaleSnap( dist );
 
 	} );
 
@@ -335,6 +337,8 @@ var Viewport = function ( editor ) {
 
 		container.dom.appendChild( renderer.domElement );
 
+		signals.renderer = renderer;
+		
 		render();
 
 	} );
@@ -549,10 +553,30 @@ var Viewport = function ( editor ) {
 		}
 
 	}
-
+	
+	var dt = 1/60;
 	function animate() {
 
 		requestAnimationFrame( animate );
+		
+		editor.world.step(dt);
+
+		// Update ball positions
+		for(var i = 0; i < editor.balls.length; i++){
+			editor.ballMeshes[i].position.copy(editor.balls[i].position);
+			editor.ballMeshes[i].quaternion.copy(editor.balls[i].quaternion);
+		}
+
+		// Update box positions
+		for(var i = 0; i < editor.boxes.length; i++){
+			editor.boxMeshes[i].position.copy(editor.boxes[i].position);
+			editor.boxMeshes[i].quaternion.copy(editor.boxes[i].quaternion);
+		}
+		
+		//console.log("--------");
+		//console.log(renderer);
+		//console.log("--------");
+		//render();
 
 		/*
 
@@ -586,7 +610,16 @@ var Viewport = function ( editor ) {
 
 		sceneHelpers.updateMatrixWorld();
 		scene.updateMatrixWorld();
-
+		
+		//console.log("-------------------------------------------------------------");
+		
+		
+		/*if(renderer === null) {
+			renderer = signals.renderer;
+		}*/
+		
+		//console.log(renderer);
+		
 		renderer.clear();
 		renderer.render( scene, camera );
 
